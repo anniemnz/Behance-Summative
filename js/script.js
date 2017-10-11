@@ -91,19 +91,42 @@ $(function() {
 
 // ================  MAP  ==================
 
-	let center = [55.7765730186677,37.705078125];
-	let map = L.map('map', {attributionControl: false}).setView(center,4);
+	let center = [ 59.1759,-23.9063];
+	let map = L.map('map', {attributionControl: false}).setView(center,1.5);
 	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhhbHl4OTAiLCJhIjoiY2o2YjdrZHRlMWJmYjJybDd2cW1rYnVnNSJ9.j_DQLfixHfhioVjH6qmqkw').addTo(map);
 
 	
 	let location =[
 					{
 						latlng:[55.727110085045986,37.705078125],
-						description: 'Moscow, RUSSIA',
-						content:'<img src="images/moscow-map.jpg">',
+						description: 'Moscow, RUSSIA <br> ILONA VERESK',
+						content:'<img src="images/mine.png">',
+						iconImage: 'images/pointer.svg'
+					},
+
+					{
+						latlng:[43.653226,-79.383184],
+						description: 'Toronto, CANADA <br> TINA PICARD',
+						content:'<img src="images/mike.png">',
+						iconImage: 'images/pointer.svg',
+					},
+
+					{
+						latlng:[51.507351,-0.127758],
+						description: 'London, UK <br> CARL WARNER',
+						content:'<img src="images/carl-warner.png">',
+						iconImage: 'images/pointer.svg'
+					},
+
+					{
+						latlng:[41.385064,2.173403],
+						description: 'Barcelona, SPAIN <br> ANDRE JOSELIN',
+						content:'<img src="images/zame.png">',
 						iconImage: 'images/pointer.svg'
 					}
 					];
+
+	let cityGroup = L.layerGroup();
 
 	_(location).each(function(city){
 
@@ -112,7 +135,31 @@ $(function() {
 									iconSize:[50,50]
 								});
 		let marker = L.marker(city.latlng,{icon:pointerIcon}).addTo(map);
-		marker.bindPopup('<div class="pop-up">'+city.description+city.content+'</div>')
+
+		let popup = L.popup({
+			closeOnClick:false,
+			className: 'interestGroup',
+			offset:[0,0]
+		})
+			.setLatLng(city.latlng)
+			.setContent(city.description+city.content)
+
+		marker.on('click',function(){
+			if(map.hasLayer(popup)){
+				map.closePopup(popup);
+			}else{
+					map.addLayer(popup);
+		}
+	});
+
+	});
+
+		let baseLayers = {};
+		let overlayers = {
+			'City':cityGroup,
+	};
+
+	L.control.layers(baseLayers,overlayers).addTo(map);
 
 
 	});
@@ -146,9 +193,9 @@ $(function() {
 		dataType: 'jsonp'
 	});
 
-	let width = 700;
+	let width = 600;
 	let height = 300;
-	let margin = 100;
+	let margin = 80;
 	let marginLeft = 100;
 
 
@@ -208,7 +255,7 @@ $(function() {
 			.enter()
 			.append('rect')
 			.attr('class','bar')
-			.attr('width',50)
+			.attr('width',60)
 			.attr('x',function(d,i){ return i*100})
 			.attr('y',function(d){ return yViewsScale(d.value) })
 			.attr('height',function(d){ return height - yViewsScale(d.value) })	
@@ -222,22 +269,24 @@ $(function() {
 		viewsGraph.append('g')
 			.call(yAxisViewsGen);
 
+
 		//tooltip for views
 		var viewsTooltip = viewsGraph.append('g')
 				.style('opacity',0)
 				.attr('class','tooltip');
 
-
 		viewsTooltip.append('rect')
-				.attr('width',150)
-				.attr('height',50)
-				.attr('fill','rgba(0,0,0,0.8)');
+				.attr('width',180)
+				.attr('height',60)
+				.attr('border-radius',15)
+				.attr('class','tooltip1')
+				.attr('fill','#272F2F');
 
 		var viewsTooltipText = viewsTooltip.append('text')
 								.text('bla')
 								.attr('class','gtext')
 								.attr('fill','white')
-								.attr('x',75)
+								.attr('x',80)
 								.attr('y',25)
 								.style('alignment-baseline', 'middle')
 								.style('text-anchor', 'middle');
@@ -247,7 +296,8 @@ $(function() {
 		//mouse events
 		viewsBars.on('mouseover',function(d){
 			viewsTooltip.style('opacity',1);
-			viewsTooltipText.text(d.name + ' : '+ d.value);
+			viewsTooltipText.text(d.name + ": " + d.value);
+			
 		});
 
 		viewsBars.on('mouseout',function(d){
@@ -260,7 +310,7 @@ $(function() {
 			var xPos = mousePos[0]-75;
 			var yPos = mousePos[1]-60;
 
-			viewsTooltip.attr('transform','translate('+xPos+','+yPos+')');
+		viewsTooltip.attr('transform','translate('+xPos+','+yPos+')');
 
 
 		});
@@ -283,7 +333,7 @@ $(function() {
 		.enter()
 		.append('rect')
 		.attr('class','bar')
-		.attr('width',50)
+		.attr('width',60)
 		.attr('x',function(d,i){ return i*100})
 		.attr('y',function(d){ return yApprecScale(d.value) })
 		.attr('height',function(d){ return height - yApprecScale(d.value) })
@@ -304,9 +354,11 @@ $(function() {
 
 
 	apprecTooltip.append('rect')
-			.attr('width',150)
-			.attr('height',50)
-			.attr('fill','rgba(0,0,0,0.8)');
+				.attr('width',180)
+				.attr('height',50)
+				.attr('border-radius',15)
+				.attr('class','tooltip1')
+				.attr('fill','#272F2F');
 
 	var apprecTooltipText = apprecTooltip.append('text')
 							.text('bla')
@@ -358,7 +410,7 @@ $(function() {
 		.enter()
 		.append('rect')
 		.attr('class','bar')
-		.attr('width',50)
+		.attr('width',60)
 		.attr('x',function(d,i){ return i*100})
 		.attr('y',function(d){ return yFollScale(d.value) })
 		.attr('height',function(d){ return height - yFollScale(d.value) })
@@ -379,12 +431,14 @@ $(function() {
 
 
 	follTooltip.append('rect')
-			.attr('width',150)
-			.attr('height',50)
-			.attr('fill','rgba(0,0,0,0.8)');
+				.attr('width',220)
+				.attr('height',50)
+				.attr('border-radius',15)
+				.attr('class','tooltip1')
+				.attr('fill','#272F2F');
 
 	var follTooltipText = follTooltip.append('text')
-							.text('bla')
+							.text('alignment','middle')
 							.attr('class','gtext')
 							.attr('fill','white')
 							.attr('x',75)
@@ -432,7 +486,7 @@ $(function() {
 		.enter()
 		.append('rect')
 		.attr('class','bar')
-		.attr('width',50)
+		.attr('width',60)
 		.attr('x',function(d,i){ return i*100})
 		.attr('y',function(d){ return yFollowingScale(d.value) })
 		.attr('height',function(d){ return height - yFollowingScale(d.value) })
@@ -453,9 +507,11 @@ $(function() {
 
 
 	followingTooltip.append('rect')
-			.attr('width',150)
-			.attr('height',50)
-			.attr('fill','rgba(0,0,0,0.8)');
+				.attr('width',180)
+				.attr('height',50)
+				.attr('border-radius',15)
+				.attr('class','tooltip1')
+				.attr('fill','#272F2F');
 
 	var followingTooltipText = followingTooltip.append('text')
 							.text('bla')
@@ -494,40 +550,6 @@ $(function() {
 
 
 
-	});
-
-});
-		
-
-// var modal = document.getElementById('projects');
-
-// // Get the button that opens the modal
-// // var img = document.getElementById("history");
-// var img2 = document.getElementById("nzImg");
-
-// // Get the <span> element that closes the modal
-// var span = document.getElementsByClassName("close")[0];
-
-// // When the user clicks the button, open the modal 
-// img.onclick = function() {
-//     modal.style.display = "block";
-// };
-
-// img2.onclick = function() {
-//     modal.style.display = "block";
-// };
-
-// // When the user clicks on <span> (x), close the modal
-// span.onclick = function() {
-//     modal.style.display = "none";
-// };
-
-// // When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//     if (event.target == modal) {
-//         modal.style.display = "none";
-//     }
-// };
 
 	
 
