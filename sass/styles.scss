@@ -153,6 +153,8 @@ img{
 	transform: translateY(0);
 	opacity:1;
 	transition: all 0.5s ease;
+
+	z-index:100;
 }
 
 .info>h1{
@@ -196,9 +198,13 @@ img{
 }
 
 .stat-info{
-	background-color: rgba(255,255,255, 0.9);
+	background-color: rgba(255,255,255, 0.4);
 	margin: auto;
-	max-width: 30%;
+	max-width: 6em;
+	text-align: left;
+	@include media-breakpoint-up(md){
+		max-width: 10em;
+	}
 }
 
 .fa-eye{
@@ -288,8 +294,6 @@ hr{
 //===========  GRAPHS  ==============
 
 #views{
-	width: 420px;
-	height: 400px;
 	border:1px #8ba3a6 solid;
 	-webkit-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
 	-moz-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
@@ -297,8 +301,6 @@ hr{
 }
 
 #appreciations{
-	width: 420px;
-	height: 400px;
 	border:1px #8ba3a6 solid;
 	-webkit-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
 	-moz-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
@@ -306,8 +308,6 @@ hr{
 }
 
 #followers{
-	width: 420px;
-	height: 400px;
 	border:1px #8ba3a6 solid;
 	-webkit-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
 	-moz-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
@@ -315,8 +315,6 @@ hr{
 }
 
 #following{
-	width: 420px;
-	height: 400px;
 	border:1px #8ba3a6 solid;
 	-webkit-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
 	-moz-box-shadow: 7px 10px 22px 2px rgba(0,0,0,0.21);
@@ -336,7 +334,19 @@ hr{
 
 .gtext{
 	text-transform: uppercase;
-	font-size: 15px;
+	font-size: 12px;
+}
+
+.graph-data{
+	background-color: rgba(223, 232, 230, 0.46);
+}
+
+.bar-graph1 svg, .bar-graph2 svg, .bar-graph3 svg, .bar-graph4 svg{
+	background-color: white;
+}
+
+.about{
+	background-color: rgba(223, 232, 230, 0.46);
 }
 
 .tooltip1{
@@ -344,6 +354,11 @@ hr{
 }
 
 // ============  DESIGNER IMAGES ==========
+
+.video{
+	// height: 90%;
+	margin: 5rem;
+}
 
 .grid {
 	position: relative;
@@ -449,10 +464,14 @@ figure.effect-sadie h2 {
 	left: 0;
 	width: 100%;
 	color: #484c61;
+	font-size: 2.6rem;
 	-webkit-transition: -webkit-transform 0.35s, color 0.35s;
 	transition: transform 0.35s, color 0.35s;
 	-webkit-transform: translate3d(0,-50%,0);
 	transform: translate3d(0,-50%,0);
+	@include media-breakpoint-up(md) {
+		font-size: 2.9rem;
+	}
 }
 
 figure.effect-sadie figcaption::before,
@@ -484,6 +503,7 @@ figure.effect-sadie:hover p {
 	-webkit-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
 }
+
 
 
 

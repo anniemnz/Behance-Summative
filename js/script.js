@@ -1,7 +1,7 @@
 $(function() {
 
   	// jquery coding inside this function
-  	let key = 'uvF145qvSLKIWMiedZfpdGxSH8lmHajb';
+  	let key = 'WXDLZ2Up7h6aO4gwm6amaNLvGNqRHceW';
 
   	let portfolioHTML = $('#portfolio-template').text();
 	let portfolioTemplate = Template7(portfolioHTML).compile();
@@ -72,13 +72,14 @@ $(function() {
 			success: function(res){
 			
 				let user = res.user;
+				console.log(user);
 				$('.about-text h1').text(user.display_name);
 				$('.about-text .company').text(user.company);
 				$('.about-text .city').text(user.location);
-				$('.about-text .social-media a').attr('href',user.social_links["0"].url);
-				$('.about-text .social-media a').text(user.social_links["0"].url);
-				$('.about-text .social-media2 a').attr('href',user.social_links["2"].url);
-				$('.about-text .social-media2 a').text(user.social_links["2"].url);
+				$('.about-text .social-media').attr('href',user.social_links["0"].url);
+				//$('.about-text .social-media').text(user.social_links["0"].url);
+				$('.about-text .social-media2').attr('href',user.social_links["2"].url);
+				//$('.about-text .social-media2').text(user.social_links["2"].url);
 				$('.about-text .website').text(user.website);
 
 				console.log(res);
@@ -101,7 +102,8 @@ $(function() {
 						latlng:[55.727110085045986,37.705078125],
 						description: 'Moscow, RUSSIA <br> ILONA VERESK',
 						content:'<img src="images/mine.png">',
-						iconImage: 'images/pointer.svg'
+						iconImage: 'images/pointer.svg',
+						name:'person 1'
 					},
 
 					{
@@ -109,24 +111,29 @@ $(function() {
 						description: 'Toronto, CANADA <br> TINA PICARD',
 						content:'<img src="images/mike.png">',
 						iconImage: 'images/pointer.svg',
+						name:'person 2'
 					},
 
 					{
 						latlng:[51.507351,-0.127758],
 						description: 'London, UK <br> CARL WARNER',
 						content:'<img src="images/carl-warner.png">',
-						iconImage: 'images/pointer.svg'
+						iconImage: 'images/pointer.svg',
+						name:'person 3'
 					},
 
 					{
 						latlng:[41.385064,2.173403],
 						description: 'Barcelona, SPAIN <br> ANDRE JOSELIN',
 						content:'<img src="images/zame.png">',
-						iconImage: 'images/pointer.svg'
+						iconImage: 'images/pointer.svg',
+						name:'person 4'
 					}
 					];
 
-	let cityGroup = L.layerGroup();
+	//let cityGroup = L.layerGroup();
+
+	let overlayers = {};
 
 	_(location).each(function(city){
 
@@ -135,12 +142,12 @@ $(function() {
 									iconSize:[50,50]
 								});
 		let marker = L.marker(city.latlng,{icon:pointerIcon}).addTo(map);
-
+		overlayers[city.name] = marker;
 		let popup = L.popup({
 			closeOnClick:false,
 			className: 'interestGroup',
 			offset:[0,0]
-		})
+			})
 			.setLatLng(city.latlng)
 			.setContent(city.description+city.content)
 
@@ -149,20 +156,18 @@ $(function() {
 				map.closePopup(popup);
 			}else{
 					map.addLayer(popup);
-		}
-	});
+			}
+		});
 
 	});
 
-		let baseLayers = {};
-		let overlayers = {
-			'City':cityGroup,
-	};
+	let baseLayers = {};
+		
 
 	L.control.layers(baseLayers,overlayers).addTo(map);
 
 
-	});
+	//});
 
 // ===========  DRAW GRAPHS  ============
 
@@ -193,19 +198,17 @@ $(function() {
 		dataType: 'jsonp'
 	});
 
-	let width = 600;
+	let width = 400;
 	let height = 300;
-	let margin = 80;
-	let marginLeft = 100;
-
+	let margin = 75;
 
 	$.when(promise1,promise2,promise3,promise4).done(function(r1,r2,r3,r4){
 
 		let viewsData = [
-			{name: r1[0].user.username, value: r1[0].user.stats.views},
-			{name: r2[0].user.username, value: r2[0].user.stats.views},
-			{name: r3[0].user.username, value: r3[0].user.stats.views},
-			{name: r4[0].user.username, value: r4[0].user.stats.views}
+			{name: r1[0].user.display_name, value: r1[0].user.stats.views},
+			{name: r2[0].user.display_name, value: r2[0].user.stats.views},
+			{name: r3[0].user.display_name, value: r3[0].user.stats.views},
+			{name: r4[0].user.display_name, value: r4[0].user.stats.views}
 
 		];
 
@@ -243,7 +246,10 @@ $(function() {
 		let viewsGraph = d3.select('#views')
 					   	.append('g');
 		viewsGraph.attr('transform','translate('+margin+','+margin+')')
-					
+		
+		viewsGraph.append('text')
+					.text('views')
+					.attr('class','bar')	;	
 							
 		var maxViews = d3.max(viewsData, function(d) { return +d.value;} );
 		var yViewsScale = d3.scaleLinear()
@@ -256,7 +262,7 @@ $(function() {
 			.append('rect')
 			.attr('class','bar')
 			.attr('width',60)
-			.attr('x',function(d,i){ return i*100})
+			.attr('x',function(d,i){ return i*100 + 5})
 			.attr('y',function(d){ return yViewsScale(d.value) })
 			.attr('height',function(d){ return height - yViewsScale(d.value) })	
 			.attr('fill','#8ba3a6');
@@ -278,15 +284,13 @@ $(function() {
 		viewsTooltip.append('rect')
 				.attr('width',180)
 				.attr('height',60)
-				.attr('border-radius',15)
 				.attr('class','tooltip1')
 				.attr('fill','#272F2F');
 
 		var viewsTooltipText = viewsTooltip.append('text')
-								.text('bla')
 								.attr('class','gtext')
 								.attr('fill','white')
-								.attr('x',80)
+								.attr('x',90)
 								.attr('y',25)
 								.style('alignment-baseline', 'middle')
 								.style('text-anchor', 'middle');
@@ -308,9 +312,9 @@ $(function() {
 			//move the tooltip around
 			var mousePos = d3.mouse(this.parentNode);
 			var xPos = mousePos[0]-75;
-			var yPos = mousePos[1]-60;
+			var yPos = mousePos[1]-80;
 
-		viewsTooltip.attr('transform','translate('+xPos+','+yPos+')');
+			viewsTooltip.attr('transform','translate('+xPos+','+yPos+')');
 
 
 		});
@@ -318,49 +322,52 @@ $(function() {
 
 // ===========  GRAPH-2 APPRECIATIONS  ============
 
-	let apprecGraph = d3.select('#appreciations')
+		let apprecGraph = d3.select('#appreciations')
 						.append('g');
-	apprecGraph.attr('transform','translate('+margin+','+margin+')')
+		apprecGraph.attr('transform','translate('+margin+','+margin+')')
 
-	var maxApprec = d3.max(apprecData, function(d) { return +d.value;} );
-	var yApprecScale = d3.scaleLinear()
+		apprecGraph.append('text')
+					.text('appreciations')	;
+
+		var maxApprec = d3.max(apprecData, function(d) { return +d.value;} );
+		var yApprecScale = d3.scaleLinear()
 			.domain([0,maxApprec])
 			.range([height,0])	
 
 
-	let apprecRects = apprecGraph.selectAll('rect')
-		.data(apprecData)
-		.enter()
-		.append('rect')
-		.attr('class','bar')
-		.attr('width',60)
-		.attr('x',function(d,i){ return i*100})
-		.attr('y',function(d){ return yApprecScale(d.value) })
-		.attr('height',function(d){ return height - yApprecScale(d.value) })
-		.attr('fill','#4c6575');
+		let apprecRects = apprecGraph.selectAll('rect')
+			.data(apprecData)
+			.enter()
+			.append('rect')
+			.attr('class','bar')
+			.attr('width',60)
+			.attr('x',function(d,i){ return i*100 + 5})
+			.attr('y',function(d){ return yApprecScale(d.value) })
+			.attr('height',function(d){ return height - yApprecScale(d.value) })
+			.attr('fill','#4c6575');
 
-	apprecRects.on('mouseover',function(e){
+		apprecRects.on('mouseover',function(e){
 			console.log(e);
 		})
 
-	var yAxisApprecGen = d3.axisLeft(yApprecScale).ticks(5);
-		apprecGraph.append('g')
+		var yAxisApprecGen = d3.axisLeft(yApprecScale).ticks(5);
+			apprecGraph.append('g')
 			.call(yAxisApprecGen);
 
-	//tooltip for appreciations
-	var apprecTooltip = apprecGraph.append('g')
+		//tooltip for appreciations
+		var apprecTooltip = apprecGraph.append('g')
 			.style('opacity',0)
 			.attr('class','tooltip');
 
 
-	apprecTooltip.append('rect')
+		apprecTooltip.append('rect')
 				.attr('width',180)
 				.attr('height',50)
 				.attr('border-radius',15)
 				.attr('class','tooltip1')
 				.attr('fill','#272F2F');
 
-	var apprecTooltipText = apprecTooltip.append('text')
+		var apprecTooltipText = apprecTooltip.append('text')
 							.text('bla')
 							.attr('class','gtext')
 							.attr('fill','white')
@@ -369,231 +376,259 @@ $(function() {
 							.style('alignment-baseline', 'middle')
 							.style('text-anchor', 'middle');
 
-	apprecBars = apprecGraph.selectAll('.bar');
+		apprecBars = apprecGraph.selectAll('.bar');
 
-	//mouse events
-	apprecBars.on('mouseover',function(d){
-		apprecTooltip.style('opacity',1);
-		apprecTooltipText.text(d.name + ' : '+ d.value);
-	});
+		//mouse events
+		apprecBars.on('mouseover',function(d){
+			apprecTooltip.style('opacity',1);
+			apprecTooltipText.text(d.name + ' : '+ d.value);
+		});
 
-	apprecBars.on('mouseout',function(d){
-		apprecTooltip.style('opacity',0);
-	});
+		apprecBars.on('mouseout',function(d){
+			apprecTooltip.style('opacity',0);
+		});
 
-	apprecBars.on('mousemove',function(d){
-		//move the tooltip around
-		var mousePos = d3.mouse(this.parentNode);
-		var xPos = mousePos[0]-75;
-		var yPos = mousePos[1]-60;
+		apprecBars.on('mousemove',function(d){
+			//move the tooltip around
+			var mousePos = d3.mouse(this.parentNode);
+			var xPos = mousePos[0]-75;
+			var yPos = mousePos[1]-60;
 
-		apprecTooltip.attr('transform','translate('+xPos+','+yPos+')');
+			apprecTooltip.attr('transform','translate('+xPos+','+yPos+')');
 
 
-	});
+		});
 
 
 	// ===========  GRAPH-3 FOLLOWERS  ============
 
 
-	let follGraph = d3.select('#followers')
-						.append('g');
-	follGraph.attr('transform','translate('+margin+','+margin+')')
+		let follGraph = d3.select('#followers')
+							.append('g');
+		follGraph.attr('transform','translate('+margin+','+margin+')')
 
-	var maxFoll = d3.max(follData, function(d) { return +d.value;} );
-	var yFollScale = d3.scaleLinear()
-				.domain([0,maxFoll])
-				.range([height,0])
+		follGraph.append('text')
+					.text('appreciations')	;
 
-	let follRects = follGraph.selectAll('rect')
-		.data(follData)
-		.enter()
-		.append('rect')
-		.attr('class','bar')
-		.attr('width',60)
-		.attr('x',function(d,i){ return i*100})
-		.attr('y',function(d){ return yFollScale(d.value) })
-		.attr('height',function(d){ return height - yFollScale(d.value) })
-		.attr('fill','#293e4f');
+		var maxFoll = d3.max(follData, function(d) { return +d.value;} );
+		var yFollScale = d3.scaleLinear()
+					.domain([0,maxFoll])
+					.range([height,0])
 
-	follRects.on('mouseover',function(e){
-			console.log(e);
-		})
+		let follRects = follGraph.selectAll('rect')
+			.data(follData)
+			.enter()
+			.append('rect')
+			.attr('class','bar')
+			.attr('width',60)
+			.attr('x',function(d,i){ return i*100 + 5})
+			.attr('y',function(d){ return yFollScale(d.value) })
+			.attr('height',function(d){ return height - yFollScale(d.value) })
+			.attr('fill','#293e4f');
 
-	var yAxisFollGen = d3.axisLeft(yFollScale).ticks(5);
-		follGraph.append('g')
-			.call(yAxisFollGen);
+		follRects.on('mouseover',function(e){
+				console.log(e);
+			})
 
-	//tooltip for follows
-	var follTooltip = follGraph.append('g')
-			.style('opacity',0)
-			.attr('class','tooltip');
+		var yAxisFollGen = d3.axisLeft(yFollScale).ticks(5);
+			follGraph.append('g')
+				.call(yAxisFollGen);
 
-
-	follTooltip.append('rect')
-				.attr('width',220)
-				.attr('height',50)
-				.attr('border-radius',15)
-				.attr('class','tooltip1')
-				.attr('fill','#272F2F');
-
-	var follTooltipText = follTooltip.append('text')
-							.text('alignment','middle')
-							.attr('class','gtext')
-							.attr('fill','white')
-							.attr('x',75)
-							.attr('y',25)
-							.style('alignment-baseline', 'middle')
-							.style('text-anchor', 'middle');
-
-	follBars = follGraph.selectAll('.bar');
-
-	//mouse events
-	follBars.on('mouseover',function(d){
-		follTooltip.style('opacity',1);
-		follTooltipText.text(d.name + ' : '+ d.value);
-	});
-
-	follBars.on('mouseout',function(d){
-		follTooltip.style('opacity',0);
-	});
-
-	follBars.on('mousemove',function(d){
-		//move the tooltip around
-		var mousePos = d3.mouse(this.parentNode);
-		var xPos = mousePos[0]-75;
-		var yPos = mousePos[1]-60;
-
-		follTooltip.attr('transform','translate('+xPos+','+yPos+')');
+		//tooltip for follows
+		var follTooltip = follGraph.append('g')
+				.style('opacity',0)
+				.attr('class','tooltip');
 
 
-	});
+		follTooltip.append('rect')
+					.attr('width',220)
+					.attr('height',50)
+					.attr('border-radius',15)
+					.attr('class','tooltip1')
+					.attr('fill','#272F2F');
+
+		var follTooltipText = follTooltip.append('text')
+								.text('alignment','middle')
+								.attr('class','gtext')
+								.attr('fill','white')
+								.attr('x',75)
+								.attr('y',25)
+								.style('alignment-baseline', 'middle')
+								.style('text-anchor', 'middle');
+
+		follBars = follGraph.selectAll('.bar');
+
+		//mouse events
+		follBars.on('mouseover',function(d){
+			follTooltip.style('opacity',1);
+			follTooltipText.text(d.name + ' : '+ d.value);
+		});
+
+		follBars.on('mouseout',function(d){
+			follTooltip.style('opacity',0);
+		});
+
+		follBars.on('mousemove',function(d){
+			//move the tooltip around
+			var mousePos = d3.mouse(this.parentNode);
+			var xPos = mousePos[0]-75;
+			var yPos = mousePos[1]-60;
+
+			follTooltip.attr('transform','translate('+xPos+','+yPos+')');
+
+
+		});
 
 
 // ===========  GRAPH-4 FOLLOWING  ============
 
-	let followingGraph = d3.select('#following')
-							.append('g');
-	followingGraph.attr('transform','translate('+margin+','+margin+')')
+		let followingGraph = d3.select('#following')
+								.append('g');
+		followingGraph.attr('transform','translate('+margin+','+margin+')')
 
-	var maxFollowing = d3.max(followingData, function(d) { return +d.value;} );
-		var yFollowingScale = d3.scaleLinear()
-				.domain([0,maxFollowing])
-				.range([height,0])
+		followingGraph.append('text')
+					.text('following')	;
 
-	let followingRects = followingGraph.selectAll('rect')
-		.data(followingData)
-		.enter()
-		.append('rect')
-		.attr('class','bar')
-		.attr('width',60)
-		.attr('x',function(d,i){ return i*100})
-		.attr('y',function(d){ return yFollowingScale(d.value) })
-		.attr('height',function(d){ return height - yFollowingScale(d.value) })
-		.attr('fill','#1a2330');
+		var maxFollowing = d3.max(followingData, function(d) { return +d.value;} );
+			var yFollowingScale = d3.scaleLinear()
+					.domain([0,maxFollowing])
+					.range([height,0])
 
-	followingRects.on('mouseover',function(e){
-			console.log(e);
-	})
+		let followingRects = followingGraph.selectAll('rect')
+			.data(followingData)
+			.enter()
+			.append('rect')
+			.attr('class','bar')
+			.attr('width',60)
+			.attr('x',function(d,i){ return i*100 + 5})
+			.attr('y',function(d){ return yFollowingScale(d.value) })
+			.attr('height',function(d){ return height - yFollowingScale(d.value) })
+			.attr('fill','#1a2330');
 
-	var yAxisFollowingGen = d3.axisLeft(yFollowingScale).ticks(5);
-	followingGraph.append('g')
-		.call(yAxisFollowingGen);
+		followingRects.on('mouseover',function(e){
+				console.log(e);
+		})
 
-	//tooltip for views
-	var followingTooltip = followingGraph.append('g')
-		.style('opacity',0)
-			.attr('class','tooltip');
+		var yAxisFollowingGen = d3.axisLeft(yFollowingScale).ticks(5);
+		followingGraph.append('g')
+			.call(yAxisFollowingGen);
 
-
-	followingTooltip.append('rect')
-				.attr('width',180)
-				.attr('height',50)
-				.attr('border-radius',15)
-				.attr('class','tooltip1')
-				.attr('fill','#272F2F');
-
-	var followingTooltipText = followingTooltip.append('text')
-							.text('bla')
-							.attr('class','gtext')
-							.attr('fill','white')
-							.attr('x',75)
-							.attr('y',25)
-							.style('alignment-baseline', 'middle')
-							.style('text-anchor', 'middle');
-
-	followingBars = followingGraph.selectAll('.bar');
-
-	//mouse events
-	followingBars.on('mouseover',function(d){
-		followingTooltip.style('opacity',1);
-		followingTooltipText.text(d.name + ' : '+ d.value);
-	});
-
-	followingBars.on('mouseout',function(d){
-		followingTooltip.style('opacity',0);
-	});
-
-	followingBars.on('mousemove',function(d){
-		//move the tooltip around
-		var mousePos = d3.mouse(this.parentNode);
-		var xPos = mousePos[0]-75;
-		var yPos = mousePos[1]-60;
-
-		followingTooltip.attr('transform','translate('+xPos+','+yPos+')');
+		//tooltip for views
+		var followingTooltip = followingGraph.append('g')
+			.style('opacity',0)
+				.attr('class','tooltip');
 
 
-	});
+		followingTooltip.append('rect')
+					.attr('width',180)
+					.attr('height',50)
+					.attr('border-radius',15)
+					.attr('class','tooltip1')
+					.attr('fill','#272F2F');
+
+		var followingTooltipText = followingTooltip.append('text')
+								.text('bla')
+								.attr('class','gtext')
+								.attr('fill','white')
+								.attr('x',75)
+								.attr('y',25)
+								.style('alignment-baseline', 'middle')
+								.style('text-anchor', 'middle');
+
+		followingBars = followingGraph.selectAll('.bar');
+
+		//mouse events
+		followingBars.on('mouseover',function(d){
+			followingTooltip.style('opacity',1);
+			followingTooltipText.text(d.name + ' : '+ d.value);
+		});
+
+		followingBars.on('mouseout',function(d){
+			followingTooltip.style('opacity',0);
+		});
+
+		followingBars.on('mousemove',function(d){
+			//move the tooltip around
+			var mousePos = d3.mouse(this.parentNode);
+			var xPos = mousePos[0]-75;
+			var yPos = mousePos[1]-60;
+
+			followingTooltip.attr('transform','translate('+xPos+','+yPos+')');
+
+
+		});
 
 // ==========  END OF GRAPHS  ===========
 
 
+	});
 
+// =============  VIDEO  =============
 
-    "use strict";
+	let $player = $('.video iframe');
 
-    $("#contact").validate();
+	$player
+	// attach video's aspect ratio
+	.data('aspectRatio', $player.height() / $player.width())
+
+	// and remove the hardcoded width/height
+	.removeAttr('height')
+	.removeAttr('width');
+
+	$(window).resize(function() {
+
+	    let $container = $(".video");
+	    let newWidth = $container.width();
+
+	    // Resize video according to aspect ratio
+	    $player
+	    .width(newWidth)
+	    .height(newWidth * $player.data('aspectRatio'));
+	}).resize();
+
+    // "use strict";
+
+    // $("#contact").validate();
     
     /* =================================
     ===  CONTACT FORM               ====
     =================================== */
-    $("#contact").submit(function (e) {
-        e.preventDefault();
-        var name = $("#form-name").val();
-        var email = $("#form-email").val();
-        var subject = $("#form-subject").val();
-        var message = $("#form-message").val();
-        var dataString = 'name=' + name + '&email=' + email + '&subject=' + subject + '&message=' + message;
+    // $("#contact").submit(function (e) {
+    //     e.preventDefault();
+    //     var name = $("#form-name").val();
+    //     var email = $("#form-email").val();
+    //     var subject = $("#form-subject").val();
+    //     var message = $("#form-message").val();
+    //     var dataString = 'name=' + name + '&email=' + email + '&subject=' + subject + '&message=' + message;
 
-        function validEmail(emailAddress) {
-            var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-            return pattern.test(emailAddress);
-        };
+    //     function validEmail(emailAddress) {
+    //         var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+    //         return pattern.test(emailAddress);
+    //     };
 
       
 
-        if (validEmail(email) && (message.length > 1) && (name.length > 1)) {
-            $.ajax({
-                type: "POST",
-                url: "send-mail.php",
-                data: dataString,
-                success: function () {
-                    $('.successContent').fadeIn(1000);
-                    $('.errorContent').fadeOut(500);
-                }
-            });
-        }
-        else {
-            $('.errorContent').fadeIn(1000);
-            $('.successContent').fadeOut(500);
-        }
-        return false;
-    });
-
+    //     if (validEmail(email) && (message.length > 1) && (name.length > 1)) {
+    //         $.ajax({
+    //             type: "POST",
+    //             url: "send-mail.php",
+    //             data: dataString,
+    //             success: function () {
+    //                 $('.successContent').fadeIn(1000);
+    //                 $('.errorContent').fadeOut(500);
+    //             }
+    //         });
+    //     }
+    //     else {
+    //         $('.errorContent').fadeIn(1000);
+    //         $('.successContent').fadeOut(500);
+    //     }
+    //     return false;
+    // });
 
 
   
-})(jQuery);
+});
 	
 
 		
