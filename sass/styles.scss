@@ -67,6 +67,9 @@
 
 .sm-links{
 	width: 100%;
+	li{
+		padding: 0 0.2em;
+	}
 }
 
 .map{
@@ -232,7 +235,7 @@ img{
 	padding-bottom: 0.5rem;
 	@include media-breakpoint-up(md) {
 		width: 12rem;
-		padding-bottom: o;
+		padding-bottom: 0;
 	}
 }
 
@@ -245,7 +248,7 @@ ul{
 	flex-direction: row;
 	font-size: 2rem;
 	margin-top: 1rem;
-	justify-content: space-evenly;
+	justify-content: space-around;
 	padding-left: 0;
 	width: 30%;
 	@include media-breakpoint-up(md) {
@@ -331,7 +334,6 @@ hr{
 	text-align: center;
 }
 
-
 .gtext{
 	text-transform: uppercase;
 	font-size: 12px;
@@ -353,12 +355,13 @@ hr{
 	border-radius: 8px;
 }
 
-// ============  DESIGNER IMAGES ==========
-
-.video{
-	// height: 90%;
-	margin: 5rem;
+.title{
+	text-transform: uppercase;
+	font-size: 1.8rem;
+	font-weight: bold;
 }
+
+// ============  DESIGNER IMAGES ==========
 
 .grid {
 	position: relative;
@@ -502,6 +505,32 @@ figure.effect-sadie:hover p {
 	opacity: 1;
 	-webkit-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
+}
+
+//=========  VIDEO  =============
+
+.video{
+	margin-top: 0rem;
+	margin: 0rem 1rem 0rem;
+	@include media-breakpoint-up(md)
+		margin-top: 0rem;
+		margin: 0rem 5rem 0rem;
+}
+
+
+//===========  SOCIAL MEDIA LINKS  =================
+
+.social-media li{
+	margin: auto;
+	font-size: 1.5rem;
+	@include media-breakpoint-up(md){
+		font-size: 2.5rem;
+	}
+}
+
+.social-media ul{
+	margin: auto;
+	margin-bottom: 3rem;
 }
 
 

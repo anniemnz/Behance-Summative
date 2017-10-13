@@ -1,6 +1,7 @@
 $(function() {
 
-  	// jquery coding inside this function
+ // =============  API KEY  ================
+
   	let key = 'WXDLZ2Up7h6aO4gwm6amaNLvGNqRHceW';
 
   	let portfolioHTML = $('#portfolio-template').text();
@@ -8,6 +9,7 @@ $(function() {
 
  	if($('#behance-api').length>0){
 
+ // ============  PROJECTS  ==============
 
 		let urlProjects = 'https://api.behance.net/v2/users/ilonaveresk/projects?client_id='+key; 
 		$.ajax({
@@ -76,10 +78,9 @@ $(function() {
 				$('.about-text h1').text(user.display_name);
 				$('.about-text .company').text(user.company);
 				$('.about-text .city').text(user.location);
-				$('.about-text .social-media').attr('href',user.social_links["0"].url);
-				//$('.about-text .social-media').text(user.social_links["0"].url);
+				$('.about-text .social-media0').attr('href',user.social_links["0"].url);
 				$('.about-text .social-media2').attr('href',user.social_links["2"].url);
-				//$('.about-text .social-media2').text(user.social_links["2"].url);
+				$('.about-text .social-media1').attr('href',user.social_links["1"].url);
 				$('.about-text .website').text(user.website);
 
 				console.log(res);
@@ -103,7 +104,7 @@ $(function() {
 						description: 'Moscow, RUSSIA <br> ILONA VERESK',
 						content:'<img src="images/mine.png">',
 						iconImage: 'images/pointer.svg',
-						name:'person 1'
+						name:'Ilona D. Veresk'
 					},
 
 					{
@@ -111,7 +112,7 @@ $(function() {
 						description: 'Toronto, CANADA <br> TINA PICARD',
 						content:'<img src="images/mike.png">',
 						iconImage: 'images/pointer.svg',
-						name:'person 2'
+						name:'Tina Picard'
 					},
 
 					{
@@ -119,7 +120,7 @@ $(function() {
 						description: 'London, UK <br> CARL WARNER',
 						content:'<img src="images/carl-warner.png">',
 						iconImage: 'images/pointer.svg',
-						name:'person 3'
+						name:'Carl Warner'
 					},
 
 					{
@@ -127,11 +128,10 @@ $(function() {
 						description: 'Barcelona, SPAIN <br> ANDRE JOSELIN',
 						content:'<img src="images/zame.png">',
 						iconImage: 'images/pointer.svg',
-						name:'person 4'
+						name:'Andre Joselin '
 					}
 					];
 
-	//let cityGroup = L.layerGroup();
 
 	let overlayers = {};
 
@@ -167,7 +167,6 @@ $(function() {
 	L.control.layers(baseLayers,overlayers).addTo(map);
 
 
-	//});
 
 // ===========  DRAW GRAPHS  ============
 
@@ -213,35 +212,33 @@ $(function() {
 		];
 
 		let apprecData = [
-			{name: r1[0].user.username, value: r1[0].user.stats.appreciations},
-			{name: r2[0].user.username, value: r2[0].user.stats.appreciations},
-			{name: r3[0].user.username, value: r3[0].user.stats.appreciations},
-			{name: r4[0].user.username, value: r4[0].user.stats.appreciations}
+			{name: r1[0].user.display_name, value: r1[0].user.stats.appreciations},
+			{name: r2[0].user.display_name, value: r2[0].user.stats.appreciations},
+			{name: r3[0].user.display_name, value: r3[0].user.stats.appreciations},
+			{name: r4[0].user.display_name, value: r4[0].user.stats.appreciations}
 
 		];
 
 		let follData = [
-			{name: r1[0].user.username, value: r1[0].user.stats.followers},
-			{name: r2[0].user.username, value: r2[0].user.stats.followers},
-			{name: r3[0].user.username, value: r3[0].user.stats.followers},
-			{name: r4[0].user.username, value: r4[0].user.stats.followers}
+			{name: r1[0].user.display_name, value: r1[0].user.stats.followers},
+			{name: r2[0].user.display_name, value: r2[0].user.stats.followers},
+			{name: r3[0].user.display_name, value: r3[0].user.stats.followers},
+			{name: r4[0].user.display_name, value: r4[0].user.stats.followers}
 
 		];
 
 		let followingData = [
-			{name: r1[0].user.username, value: r1[0].user.stats.following},
-			{name: r2[0].user.username, value: r2[0].user.stats.following},
-			{name: r3[0].user.username, value: r3[0].user.stats.following},
-			{name: r4[0].user.username, value: r4[0].user.stats.following}
+			{name: r1[0].user.display_name, value: r1[0].user.stats.following},
+			{name: r2[0].user.display_name, value: r2[0].user.stats.following},
+			{name: r3[0].user.display_name, value: r3[0].user.stats.following},
+			{name: r4[0].user.display_name, value: r4[0].user.stats.following}
 
 		];
 
-// ==========  END OF PROMISES  ===========
-
-		//console.log(r1[0].user.stats);
-		// ===========  GRAPH-1 VIEWS  ============
+	// ==========  END OF PROMISES  ===========
 
 
+// ===========  GRAPH-1 VIEWS  ============
 		
 		let viewsGraph = d3.select('#views')
 					   	.append('g');
@@ -249,7 +246,10 @@ $(function() {
 		
 		viewsGraph.append('text')
 					.text('views')
-					.attr('class','bar')	;	
+					.attr('x',width/2)
+					.attr('y',-30)
+					.style('text-anchor', 'middle')
+					.attr('class','title')	;	
 							
 		var maxViews = d3.max(viewsData, function(d) { return +d.value;} );
 		var yViewsScale = d3.scaleLinear()
@@ -276,7 +276,7 @@ $(function() {
 			.call(yAxisViewsGen);
 
 
-		//tooltip for views
+		// tooltip for views
 		var viewsTooltip = viewsGraph.append('g')
 				.style('opacity',0)
 				.attr('class','tooltip');
@@ -297,7 +297,7 @@ $(function() {
 
 		viewsBars = viewsGraph.selectAll('.bar');
 
-		//mouse events
+		// mouse events
 		viewsBars.on('mouseover',function(d){
 			viewsTooltip.style('opacity',1);
 			viewsTooltipText.text(d.name + ": " + d.value);
@@ -309,7 +309,7 @@ $(function() {
 		});
 
 		viewsBars.on('mousemove',function(d){
-			//move the tooltip around
+			// move the tooltip around
 			var mousePos = d3.mouse(this.parentNode);
 			var xPos = mousePos[0]-75;
 			var yPos = mousePos[1]-80;
@@ -327,7 +327,11 @@ $(function() {
 		apprecGraph.attr('transform','translate('+margin+','+margin+')')
 
 		apprecGraph.append('text')
-					.text('appreciations')	;
+					.text('appreciations')
+					.attr('x',width/2)
+					.attr('y',-30)
+					.style('text-anchor', 'middle')
+					.attr('class','title')	;
 
 		var maxApprec = d3.max(apprecData, function(d) { return +d.value;} );
 		var yApprecScale = d3.scaleLinear()
@@ -408,7 +412,11 @@ $(function() {
 		follGraph.attr('transform','translate('+margin+','+margin+')')
 
 		follGraph.append('text')
-					.text('appreciations')	;
+					.text('followers')
+					.attr('x',width/2)
+					.attr('y',-30)
+					.style('text-anchor', 'middle')
+					.attr('class','title')	;
 
 		var maxFoll = d3.max(follData, function(d) { return +d.value;} );
 		var yFollScale = d3.scaleLinear()
@@ -487,7 +495,11 @@ $(function() {
 		followingGraph.attr('transform','translate('+margin+','+margin+')')
 
 		followingGraph.append('text')
-					.text('following')	;
+					.text('following')
+					.attr('x',width/2)
+					.attr('y',-30)
+					.style('text-anchor', 'middle')
+					.attr('class','title')	;
 
 		var maxFollowing = d3.max(followingData, function(d) { return +d.value;} );
 			var yFollowingScale = d3.scaleLinear()
@@ -558,76 +570,37 @@ $(function() {
 
 		});
 
+	});
+
 // ==========  END OF GRAPHS  ===========
 
 
-	});
-
-// =============  VIDEO  =============
-
-	let $player = $('.video iframe');
-
-	$player
-	// attach video's aspect ratio
-	.data('aspectRatio', $player.height() / $player.width())
-
-	// and remove the hardcoded width/height
-	.removeAttr('height')
-	.removeAttr('width');
-
-	$(window).resize(function() {
-
-	    let $container = $(".video");
-	    let newWidth = $container.width();
-
-	    // Resize video according to aspect ratio
-	    $player
-	    .width(newWidth)
-	    .height(newWidth * $player.data('aspectRatio'));
-	}).resize();
-
-    // "use strict";
-
-    // $("#contact").validate();
-    
-    /* =================================
-    ===  CONTACT FORM               ====
-    =================================== */
-    // $("#contact").submit(function (e) {
-    //     e.preventDefault();
-    //     var name = $("#form-name").val();
-    //     var email = $("#form-email").val();
-    //     var subject = $("#form-subject").val();
-    //     var message = $("#form-message").val();
-    //     var dataString = 'name=' + name + '&email=' + email + '&subject=' + subject + '&message=' + message;
-
-    //     function validEmail(emailAddress) {
-    //         var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-    //         return pattern.test(emailAddress);
-    //     };
-
-      
-
-    //     if (validEmail(email) && (message.length > 1) && (name.length > 1)) {
-    //         $.ajax({
-    //             type: "POST",
-    //             url: "send-mail.php",
-    //             data: dataString,
-    //             success: function () {
-    //                 $('.successContent').fadeIn(1000);
-    //                 $('.errorContent').fadeOut(500);
-    //             }
-    //         });
-    //     }
-    //     else {
-    //         $('.errorContent').fadeIn(1000);
-    //         $('.successContent').fadeOut(500);
-    //     }
-    //     return false;
-    // });
 
 
-  
+// =============  YOUTUBE VIDEO  =============
+
+		let $player = $('.video iframe');
+
+		$player
+		// attach video's aspect ratio
+		.data('aspectRatio', $player.height() / $player.width())
+
+		// and remove the hardcoded width/height
+		.removeAttr('height')
+		.removeAttr('width');
+
+		$(window).resize(function() {
+
+		    let $container = $(".video");
+		    let newWidth = $container.width();
+
+		    // Resize video according to aspect ratio
+		    $player
+		    .width(newWidth)
+		    .height(newWidth * $player.data('aspectRatio'));
+		}).resize();
+
+
 });
 	
 
