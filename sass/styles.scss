@@ -200,16 +200,6 @@ img{
 	}
 }
 
-.stat-info{
-	background-color: rgba(255,255,255, 0.4);
-	margin: auto;
-	max-width: 6em;
-	text-align: left;
-	@include media-breakpoint-up(md){
-		max-width: 10em;
-	}
-}
-
 .fa-eye{
 	color: $sec-col;
 	font-size: 1rem;
@@ -229,7 +219,7 @@ img{
 	}
 }
 
-.project-container .twig{
+.img-responsive .twig{
 	margin: auto;
 	width: 6em;
 	padding-bottom: 0.5rem;
